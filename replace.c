@@ -13,6 +13,7 @@ int main(int argc, char **argv) {
 	// argparsing
 	char *tfilename = "../src/template.html";
 	char *filename = "../src/index.md";
+	char *cname = "./md2html";
 	for (int i = 1; i < argc; i++)
 		if (*(argv[i]) != '-')
 			filename = argv[i];
@@ -20,6 +21,8 @@ int main(int argc, char **argv) {
 			return 1;
 		else if (opt("-t"))
 			tfilename = argv[++i];
+		else if (opt("-c"))
+			cname = argv[++i];
 		else
 			return 1;
 	/*
@@ -49,7 +52,7 @@ int main(int argc, char **argv) {
 			*buf = 0;
 			pid_t compiler = fork();
 			if (compiler == 0)
-				sys(((char *[]){"./md2html", filename, NULL}));
+				sys(((char *[]){cname, filename, NULL}));
 			wait(&compiler);
 			continue;
 		} else if (content_pointer == 0)
