@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include <fcntl.h>
-#include <alloca.h>
 #include <sys/wait.h>
 #include <string.h>
 #include "replace.h"
@@ -26,7 +25,7 @@ int main(int argc, char **argv) {
 	while ((c = readc(tfd)) != -1) {
 		if (c == CONTENT[content_pointer])
 			buf[content_pointer++] = c;
-		else if (content_pointer > 0){
+		else if (content_pointer > 0) {
 			write(1, buf, content_pointer);
 			content_pointer = 0;
 			*buf = 0;
@@ -35,9 +34,8 @@ int main(int argc, char **argv) {
 			content_pointer = 0;
 			*buf = 0;
 			pid_t compiler = fork();
-			if (compiler == 0) {
+			if (compiler == 0)
 				sys(((char *[]){"./md2html", "../src/index.md", NULL}));
-			}
 			wait(&compiler);
 			continue;
 		} else if (content_pointer == 0)
