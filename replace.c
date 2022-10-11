@@ -7,7 +7,21 @@
 extern char **environ;
 #define sys(args) execve(*(args), (args), environ)
 
+#define opt(o) (strcmp(argv[i], o) == 0)
+
 int main(int argc, char **argv) {
+	// argparsing
+	char *tfilename = "../src/template.html";
+	char *filename = "../src/index.md";
+	for (int i = 1; i < argc; i++)
+		if (*(argv[i]) != '-')
+			filename = argv[i];
+		else if (i + 1 == argc)
+			return 1;
+		else if (opt("-t"))
+			tfilename = argv[++i];
+		else
+			return 1;
 	/*
 	First, read from the template (hardcoded as ../src/template.html) and write it to stdout.
 	Second, if you encounter a line that matches the String "<!-- CONTENT -->", then pipe your input (TODO from arguments, and TODO from stdin) through the compiler (which should also print to stdout). Wait for this to end.
@@ -15,7 +29,7 @@ int main(int argc, char **argv) {
 
 	TODO make custom <title> possible, perhaps by the first h1 in markdown?
 	*/
-	int tfd = open("../src/template.html", 0);
+	int tfd = open(tfilename, 0);
 	char buf[20];
 	*buf = 0;
 	const char *CONTENT = "<!-- CONTENT -->";
@@ -35,7 +49,7 @@ int main(int argc, char **argv) {
 			*buf = 0;
 			pid_t compiler = fork();
 			if (compiler == 0)
-				sys(((char *[]){"./md2html", "../src/index.md", NULL}));
+				sys(((char *[]){"./md2html", filename, NULL}));
 			wait(&compiler);
 			continue;
 		} else if (content_pointer == 0)
