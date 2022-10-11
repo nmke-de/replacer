@@ -20,6 +20,6 @@ replace: $(mobj) $(LIBC)
 clean:
 	rm -f scalp *.o
 
-.PHONY: build check clean
+.PHONY: build clean
 
-all: build check clean
+all: build clean
