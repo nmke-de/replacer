@@ -2,7 +2,12 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <string.h>
+#include <alloca.h>
 #include "replace.h"
+
+#ifndef alloca
+#define alloca __builtin_alloca
+#endif
 
 extern char **environ;
 #define sys(args) execve(*(args), (args), environ)
@@ -36,29 +41,26 @@ int main(int argc, char **argv) {
 	TODO make custom <title> possible, perhaps by the first h1 in markdown?
 	*/
 	int tfd = open(tfilename, 0);
-	char buf[20];
-	*buf = 0;
-	const char *CONTENT = "<!-- CONTENT -->";
-	int content_pointer = 0;
-	const int content_len = strlen(CONTENT);
+	substring _content = subpattern("<!-- CONTENT -->");
+	// substring _title = subpattern("<!-- TITLE -->");
 	char c;
 	while ((c = readc(tfd)) != -1) {
-		if (c == CONTENT[content_pointer])
-			buf[content_pointer++] = c;
-		else if (content_pointer > 0) {
-			write(1, buf, content_pointer);
-			content_pointer = 0;
-			*buf = 0;
+		if (c == _content.pattern[_content.ptr])
+			_content.buf[_content.ptr++] = c;
+		else if (_content.ptr > 0) {
+			write(1, _content.buf, _content.ptr);
+			_content.ptr = 0;
+			//*buf = 0;
 		}
-		if (content_pointer == content_len) {
-			content_pointer = 0;
-			*buf = 0;
+		if (_content.ptr == _content.len) {
+			_content.ptr = 0;
+			//*buf = 0;
 			pid_t compiler = fork();
 			if (compiler == 0)
 				sys(((char *[]){cname, filename, NULL}));
 			wait(&compiler);
 			continue;
-		} else if (content_pointer == 0)
+		} else if (_content.ptr == 0)
 			write(1, &c, 1);
 	}
 	close(tfd);
