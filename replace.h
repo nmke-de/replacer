@@ -6,8 +6,9 @@ typedef struct {
 	const int len;
 	char *buf;
 	int ptr;
+	int matching;
 } substring;
 
 // This init macro requires string.h and alloca.h
 #define subpattern(str) \
-	(substring) { (str), strlen((str)), alloca(sizeof(char) * strlen((str))), 0 }
+	(substring) { (str), strlen((str)), alloca(sizeof(char) * strlen((str))), 0, 0 }
