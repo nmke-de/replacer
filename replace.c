@@ -40,27 +40,40 @@ int main(int argc, char **argv) {
 
 	TODO make custom <title> possible, perhaps by the first h1 in markdown?
 	*/
+	// The following algorithm assumes that all substring patterns begin with the same character and end with the same character.
 	int tfd = open(tfilename, 0);
+	char buf[20];
+	int ptr = 0;
 	substring _content = subpattern("<!-- CONTENT -->");
-	// substring _title = subpattern("<!-- TITLE -->");
+	substring _title = subpattern("<!-- TITLE -->");
 	char c;
 	while ((c = readc(tfd)) != -1) {
-		if (c == _content.pattern[_content.ptr])
-			_content.buf[_content.ptr++] = c;
-		else if (_content.ptr > 0) {
-			write(1, _content.buf, _content.ptr);
-			_content.ptr = 0;
+		if (c == _content.pattern[ptr]) {
+			_content.matching = 1;
+			buf[ptr++] = c;
+		} else if (c == _title.pattern[ptr]) {
+			_content.matching = 0;
+			_title.matching = 1;
+			buf[ptr++] = c;
+		} else if (ptr > 0) {
+			write(1, buf, ptr);
+			ptr = 0;
 			//*buf = 0;
 		}
-		if (_content.ptr == _content.len) {
-			_content.ptr = 0;
+		if (ptr == _content.len && _content.matching) {
+			ptr = 0;
+			_content.matching = 0;
 			//*buf = 0;
 			pid_t compiler = fork();
 			if (compiler == 0)
 				sys(((char *[]){cname, filename, NULL}));
 			wait(&compiler);
 			continue;
-		} else if (_content.ptr == 0)
+		} else if (ptr == _title.len && _title.matching) {
+			ptr = 0;
+			_title.matching = 0;
+			write(1, title, strlen(title));
+		} else if (ptr == 0)
 			write(1, &c, 1);
 	}
 	close(tfd);
