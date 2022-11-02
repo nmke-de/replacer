@@ -46,6 +46,7 @@ int main(int argc, char **argv) {
 	int ptr = 0;
 	substring _content = subpattern("<!-- CONTENT -->");
 	substring _title = subpattern("<!-- TITLE -->");
+	substring _date = subpattern("<!-- DATE -->");
 	char c;
 	while ((c = readc(tfd)) != -1) {
 		if (c == _content.pattern[ptr]) {
@@ -54,6 +55,10 @@ int main(int argc, char **argv) {
 		} else if (c == _title.pattern[ptr]) {
 			_content.matching = 0;
 			_title.matching = 1;
+			buf[ptr++] = c;
+		} else if (c == _date.pattern[ptr]) {
+			_title.matching = 0;
+			_date.matching = 1;
 			buf[ptr++] = c;
 		} else if (ptr > 0) {
 			write(1, buf, ptr);
@@ -68,8 +73,11 @@ int main(int argc, char **argv) {
 			if (compiler == 0)
 				sys(((char *[]){cname, filename, NULL}));
 			wait(&compiler);
-			continue;
 		} else if (ptr == _title.len && _title.matching) {
+			ptr = 0;
+			_title.matching = 0;
+			write(1, title, strlen(title));
+		} else if (ptr == _date.len && _date.matching) {
 			ptr = 0;
 			_title.matching = 0;
 			write(1, title, strlen(title));
