@@ -20,6 +20,7 @@ int main(int argc, char **argv) {
 	char *filename = "../src/index.md";
 	char *cname = "./md2html";
 	char *title = "Title";
+	char *date = "1970-01-01 00:00";
 	for (int i = 1; i < argc; i++)
 		if (*(argv[i]) != '-')
 			filename = argv[i];
@@ -31,6 +32,8 @@ int main(int argc, char **argv) {
 			cname = argv[++i];
 		else if (opt("-T"))
 			title = argv[++i];
+		else if (opt("-D"))
+			date = argv[++i];
 		else
 			return 1;
 	/*
@@ -79,8 +82,8 @@ int main(int argc, char **argv) {
 			write(1, title, strlen(title));
 		} else if (ptr == _date.len && _date.matching) {
 			ptr = 0;
-			_title.matching = 0;
-			write(1, title, strlen(title));
+			_date.matching = 0;
+			write(1, date, strlen(date));
 		} else if (ptr == 0)
 			write(1, &c, 1);
 	}
