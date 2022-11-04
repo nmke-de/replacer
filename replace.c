@@ -21,6 +21,7 @@ int main(int argc, char **argv) {
 	char *cname = "./md2html";
 	char *title = "Title";
 	char *date = "1970-01-01 00:00";
+	char *uri = "about:blank";
 	for (int i = 1; i < argc; i++)
 		if (*(argv[i]) != '-')
 			filename = argv[i];
@@ -34,6 +35,8 @@ int main(int argc, char **argv) {
 			title = argv[++i];
 		else if (opt("-D"))
 			date = argv[++i];
+		else if (opt("-U"))
+			uri = argv[++i];
 		else
 			return 1;
 	/*
@@ -50,6 +53,7 @@ int main(int argc, char **argv) {
 	substring _content = subpattern("<!-- CONTENT -->");
 	substring _title = subpattern("<!-- TITLE -->");
 	substring _date = subpattern("<!-- DATE -->");
+	substring _uri = subpattern("<!-- URI -->");
 	char c;
 	while ((c = readc(tfd)) != -1) {
 		if (c == _content.pattern[ptr]) {
@@ -62,6 +66,10 @@ int main(int argc, char **argv) {
 		} else if (c == _date.pattern[ptr]) {
 			_title.matching = 0;
 			_date.matching = 1;
+			buf[ptr++] = c;
+		} else if (c == _uri.pattern[ptr]) {
+			_date.matching = 0;
+			_uri.matching = 1;
 			buf[ptr++] = c;
 		} else if (ptr > 0) {
 			write(1, buf, ptr);
@@ -84,6 +92,10 @@ int main(int argc, char **argv) {
 			ptr = 0;
 			_date.matching = 0;
 			write(1, date, strlen(date));
+		} else if (ptr == _uri.len && _uri.matching) {
+			ptr = 0;
+			_uri.matching = 0;
+			write(1, uri, strlen(uri));
 		} else if (ptr == 0)
 			write(1, &c, 1);
 	}
