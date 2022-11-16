@@ -27,6 +27,6 @@ Type `make`.
 
 ## Usage
 
-`./replace [filename] [-t template_filename] [-c compiler]`
+`./replace [filename] [-t template_filename] [-c compiler] [-T title] [-U uri] [-D date]`
 
 Currently, the replacer does not search the `PATH` for the compiler executable.
