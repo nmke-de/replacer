@@ -40,11 +40,11 @@ int main(int argc, char **argv) {
 		else
 			return 1;
 	/*
-	First, read from the template (hardcoded as ../src/template.html) and write it to stdout.
-	Second, if you encounter a line that matches the String "<!-- CONTENT -->", then pipe your input (TODO from arguments, and TODO from stdin) through the compiler (which should also print to stdout). Wait for this to end.
+	First, read from the template <tfilename> and write it to stdout.
+	Second, if you encounter a line that matches the String "<!-- CONTENT -->", then pipe your input (TODO from stdin) through the compiler (which should also print to stdout).
+	Similar procedure for the other strings ("<!-- URI -->". "<!-- TITLE -->", "<!-- URI -->")
+	Wait for this to end.
 	Third, finish reading the template and write it to stdout.
-
-	TODO make custom <title> possible, perhaps by the first h1 in markdown?
 	*/
 	// The following algorithm assumes that all substring patterns begin with the same character and end with the same character.
 	int tfd = open(tfilename, 0);
