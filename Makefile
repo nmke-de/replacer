@@ -4,6 +4,7 @@ obj  = readc.o
 mobj = replace.o $(obj)
 #tobj = $(obj)
 
+CFLAGS += -Wall
 LDFLAGS += -static -s -z norelro -z noseparate-code
 
 build: replace
