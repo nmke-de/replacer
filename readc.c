@@ -13,7 +13,8 @@ char readc(int fd) {
 	if (rl == ptr) {
 		rl = read(fd, c, BUFLEN);
 		ptr = 0;
-	} else if (rl < 1)
+	}
+	if (rl < 1)
 		return -1;
 	return c[ptr++];
 }
